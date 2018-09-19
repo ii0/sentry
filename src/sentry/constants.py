@@ -76,6 +76,9 @@ MAX_TAG_VALUE_LENGTH = 200
 MAX_CULPRIT_LENGTH = 200
 MAX_EMAIL_FIELD_LENGTH = 75
 
+ENVIRONMENT_NAME_PATTERN = r'^[a-z0-9][a-z0-9_\-\. :]*$'
+ENVIRONMENT_NAME_MAX_LENGTH = 64
+
 # Team slugs which may not be used. Generally these are top level URL patterns
 # which we don't want to worry about conflicts on.
 RESERVED_ORGANIZATION_SLUGS = frozenset(

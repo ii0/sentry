@@ -36,3 +36,24 @@ class GetOrCreateTest(TestCase):
                 project.organization_id,
                 'prod',
             ).id == env.id
+
+
+@pytest.mark.parametrize('val,expected', [
+    ('42', True),
+    ('ok', True),
+    ('production', True),
+    ('deadbeef', True),
+    ('staging.0.1.company', True),
+    ('valid_under', True),
+    ('spaces ok', True),
+    ('--need leading letter', False),
+    ('no/slashes', False),
+    ('no/slashes', False),
+    ('no(parens)', False),
+    ('no;semi', False),
+    ('no#octothorpe', False),
+    ('no{curly}', False),
+    ('no|pipe', False),
+])
+def test_valid_name(val, expected):
+    assert Environment.is_valid_name(val) == expected

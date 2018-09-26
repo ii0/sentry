@@ -10,7 +10,6 @@ import ConfigStore from 'app/stores/configStore';
 import ExternalLink from 'app/components/externalLink';
 import InlineSvg from 'app/components/inlineSvg';
 import Link from 'app/components/link';
-import LoadingIndicator from 'app/components/loadingIndicator';
 import {Panel, PanelBody, PanelHeader} from 'app/components/panels';
 import overflowEllipsis from 'app/styles/overflowEllipsis';
 import SentryTypes from 'app/sentryTypes';
@@ -99,7 +98,7 @@ class SettingsIndex extends React.Component {
             <Box w={1 / 3} px={2}>
               {/* if admin */}
               <Panel>
-                {!organization && <LoadingIndicator overlay />}
+                {!organization && <div className="overlay loading" />}
                 <HomePanelHeader>
                   <HomeLinkIcon to={organizationSettingsUrl}>
                     {organization ? (
@@ -112,7 +111,7 @@ class SettingsIndex extends React.Component {
                       </HomeIcon>
                     )}
                     <OrganizationName css={{lineHeight: '1.1em'}}>
-                      {organization ? organization.slug : t('Organization')}
+                      {organization ? organization.slug : t('No Organization')}
                     </OrganizationName>
                   </HomeLinkIcon>
                 </HomePanelHeader>

@@ -13,7 +13,7 @@ describe('SettingsIndex', function() {
   it('has loading when there is no organization', function() {
     let wrapper = shallow(<SettingsIndex organization={null} />);
 
-    expect(wrapper.find('LoadingIndicator')).toHaveLength(1);
+    expect(wrapper.find('div.overlay.loading')).toHaveLength(1);
   });
 
   it('has different links for on premise users', function() {

@@ -78,6 +78,24 @@ const GroupSidebar = createReactClass({
         });
       },
     });
+
+    // Fetch the top values for the current group's top tags.
+    this.api.request(`/issues/${group.id}/tags/`, {
+      query: _.pickBy({
+        key: group.tags.map(data => data.key),
+        environment: this.props.environment && this.props.environment.name
+      }),
+      success: data => {
+        this.setState({
+          tagsWithTopValues: _.keyBy(data, 'key')
+        });
+      },
+      error: () => {
+        this.setState({
+          error: true,
+        });
+      },
+    });
   },
 
   subscriptionReasons: {
@@ -241,19 +259,23 @@ const GroupSidebar = createReactClass({
         <h6>
           <span>{t('Tags')}</span>
         </h6>
-        {group.tags.map(data => {
-          return (
+        {this.state.tagsWithTopValues && _.filter(group.tags.map(tag => {
+          let tagWithTopValues = this.state.tagsWithTopValues[tag.key]
+          return tagWithTopValues && (
             <TagDistributionMeter
-              key={data.key}
+              key={tag.key}
+              tag={tag.key}
+              totalValues={tag.totalValues || tagWithTopValues.totalValues}
+              topValues={tagWithTopValues.topValues}
+              name={tag.name}
+
               data-test-id="group-tag"
               orgId={orgId}
               projectId={projectId}
               group={group}
-              name={data.name}
-              tag={data.key}
             />
           );
-        })}
+        }))}
         {group.tags.length === 0 && (
           <p data-test-id="no-tags">
             {this.props.environment

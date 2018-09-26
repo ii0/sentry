@@ -32,7 +32,6 @@ const TagDistributionMeter = createReactClass({
     return {
       loading: true,
       error: false,
-      data: null,
     };
   },
 
@@ -57,24 +56,14 @@ const TagDistributionMeter = createReactClass({
   },
 
   fetchData() {
-    const {group, tag, environment} = this.props;
-    const url = `/issues/${group.id}/tags/${encodeURIComponent(tag)}/`;
-    const query = environment ? {environment: environment.name} : {};
-
     this.setState({
       loading: true,
       error: false,
     });
 
-    Promise.all([
-      this.api.requestPromise(url, {
-        query,
-      }),
-      loadDeviceListModule(),
-    ])
-      .then(([data, iOSDeviceList]) => {
+      loadDeviceListModule()
+      .then(iOSDeviceList => {
         this.setState({
-          data,
           iOSDeviceList,
           error: false,
           loading: false,
@@ -99,19 +88,16 @@ const TagDistributionMeter = createReactClass({
    */
 
   renderSegments() {
-    let data = this.state.data;
-    let totalValues = data.totalValues;
+    let {orgId, projectId, group, totalValues, topValues, tag} = this.props;
 
-    let totalVisible = data.topValues.reduce((sum, value) => sum + value.count, 0);
-
+    let totalVisible = topValues.reduce((sum, value) => sum + value.count, 0);
     let hasOther = totalVisible < totalValues;
     let otherPct = percent(totalValues - totalVisible, totalValues);
     let otherPctLabel = Math.floor(otherPct);
 
-    let {orgId, projectId} = this.props;
     return (
       <div className="segments">
-        {data.topValues.map((value, index) => {
+        {topValues.map((value, index) => {
           const pct = percent(value.count, totalValues);
           const pctLabel = Math.floor(pct);
           const className = 'segment segment-' + index;
@@ -128,8 +114,7 @@ const TagDistributionMeter = createReactClass({
               <Link
                 className={className}
                 style={{width: pct + '%'}}
-                to={`/${orgId}/${projectId}/issues/${this.props.group.id}/tags/${this
-                  .props.tag}/`}
+                to={`/${orgId}/${projectId}/issues/${group.id}/tags/${tag}/`}
               >
                 <span className="tag-description">
                   <span className="tag-percentage">{pctLabel}%</span>
@@ -163,7 +148,7 @@ const TagDistributionMeter = createReactClass({
   renderBody() {
     if (this.state.loading || this.state.error) return null;
 
-    if (!this.state.data.totalValues) return <p>{t('No recent data.')}</p>;
+    if (!this.props.totalValues) return <p>{t('No recent data.')}</p>;
 
     return this.renderSegments();
   },
